@@ -11,6 +11,6 @@ program
   .arguments('<url>')
   .action(url => downloadPage(url, program.output)
     .then(() => console.log('Page was successfully downloaded'))
-    .catch(e => console.error(`${e.code} ${e.name}: ${e.message}`)))
+    .catch(e => console.error(`${e.stack} ${e.code} ${e.name}: ${e.message}`)))
 
   .parse(process.argv);
