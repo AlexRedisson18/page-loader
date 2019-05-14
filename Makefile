@@ -5,7 +5,7 @@ install-deps:
 	npm install
 
 run:
-	npx babel-node -- src/bin/page-loader.js --output /home/user/page-loader2 https://hexlet.io/courses
+	npx babel-node -- src/bin/page-loader.js --output /home/user/page-loader2 https://www.youtube.com
 
 build:
 	rm -rf dist
