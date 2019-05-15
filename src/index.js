@@ -5,6 +5,7 @@ import url from 'url';
 import cheerio from 'cheerio';
 import debug from 'debug';
 import httpAdapter from 'axios/lib/adapters/http';
+import Listr from 'listr';
 
 axios.defaults.adapter = httpAdapter;
 
@@ -51,7 +52,7 @@ export default (pageUrl, pathForSave) => {
       const keys = Object.keys(tagList);
       keys.forEach(tag => $(tag)
         .filter((i, elem) => {
-          const link = $(elem).attr(tagList[tag]); // $(link).attr(href)
+          const link = $(elem).attr(tagList[tag]);
           return isLink(link);
         })
         .map((i, elem) => {
@@ -68,16 +69,19 @@ export default (pageUrl, pathForSave) => {
     })
     .then(() => fs.mkdir(fileDir.path))
     .then(() => {
-      linksList.map((link) => {
-        const currentLink = url.resolve(pageUrl, link);
-        return axios
-          .get(currentLink, { responseType: 'arraybuffer' })
+      const tasks = new Listr(linksList.map(link => ({
+        title: `Downloading file: ${link}`,
+        task: () => axios
+          .get(url.resolve(pageUrl, link), { responseType: 'arraybuffer' })
           .then((response) => {
             const filename = makeLocalName(link);
             const linkSavePath = path.join(fileDir.path, filename);
             getLog(`download content: ${filename}`);
             return fs.writeFile(linkSavePath, response.data);
-          });
-      });
-    });
+          }),
+      })), { concurrent: true });
+      return tasks.run();
+    })
+    .then(() => console.log(`\nPage '${mainFile.name}' was successfuly downloaded\nfrom ${pageUrl} to ${pathForSave}`))
+    .catch(e => console.error(`${e.stack} ${e.code} ${e.name}: ${e.message}`));
 };
