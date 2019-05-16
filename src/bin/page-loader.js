@@ -10,6 +10,8 @@ program
   .option('-o, --output [path]', 'output directory', process.cwd())
   .arguments('<url>')
   .action(url => downloadPage(url, program.output)
-    .catch(e => console.error(`${e.stack} ${e.code} ${e.name}: ${e.message}`)))
-
+    .catch((error) => {
+      console.error(error.message);
+      process.exit(1);
+    }))
   .parse(process.argv);

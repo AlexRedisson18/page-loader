@@ -29,6 +29,10 @@ const makeLocalName = (link, dir = '') => {
 // ('https://ru.hexlet.io/courses', '.html') => 'ru-hexlet-io-courses.html'
 const linkToCebab = (pageUrl, extension = '') => {
   const { hostname, pathname } = url.parse(pageUrl);
+  if (pathname === '/') {
+    const rawName = hostname.replace(/\W/g, '-');
+    return `${rawName}${extension}`;
+  }
   const rawName = `${hostname}${pathname}`.replace(/\W/g, '-');
   return `${rawName}${extension}`;
 };
@@ -58,7 +62,7 @@ export default (pageUrl, pathForSave) => {
         .map((i, elem) => {
           const link = $(elem).attr(tagList[tag]);
           linksList.push(link);
-          const localLink = makeLocalName(link, fileDir.path);
+          const localLink = makeLocalName(link, fileDir.name);
           getLog(`change ${link} to ${localLink}`);
           return $(elem).attr(tagList[tag], localLink);
         }));
@@ -82,6 +86,6 @@ export default (pageUrl, pathForSave) => {
       })), { concurrent: true });
       return tasks.run();
     })
-    .then(() => console.log(`\nPage '${mainFile.name}' was successfuly downloaded\nfrom ${pageUrl} to ${pathForSave}`))
-    .catch(e => console.error(`${e.stack} ${e.code} ${e.name}: ${e.message}`));
+    .catch(error => console.error(error.message))
+    .then(() => console.log(`\nPage '${mainFile.name}' was successfuly downloaded\nfrom ${pageUrl} to ${pathForSave}`));
 };
