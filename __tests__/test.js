@@ -18,18 +18,17 @@ const style = path.resolve(__dirname, '__fixtures__/files/style.css');
 
 test('download simple html', async () => {
   const host = 'http://localhost';
-  const fixtureContent = await fs.readFile(htmlNoLinks, 'utf8');
   const tmpDir = await fs.mkdtemp(path.resolve(os.tmpdir(), 'test-directory-'));
   nock(host)
     .get('/')
-    .reply(200, fixtureContent);
-
+    .replyWithFile(200, htmlNoLinks);
   await downloadPage(host, tmpDir);
-  const fileContent = await fs.readFile(path.resolve(tmpDir, 'localhost.html'), 'utf8');
-  return expect(fileContent).toBe(fixtureContent);
+  const receivedHtml = await fs.readFile(path.resolve(tmpDir, 'localhost.html'), 'utf8');
+  const expectedHtml = await fs.readFile(htmlNoLinks, 'utf8');
+  expect(receivedHtml).toBe(expectedHtml);
 });
 
-test('download changed html', async () => {
+test('download changed html with resources', async () => {
   const host = 'http://localhost';
   const tmpDir = await fs.mkdtemp(path.resolve(os.tmpdir(), 'test-directory-'));
   nock(host)
@@ -44,8 +43,21 @@ test('download changed html', async () => {
   nock(host)
     .get('/files/style.css')
     .replyWithFile(200, style);
+
   await downloadPage(host, tmpDir);
-  const result = await fs.readFile(htmlWithChangedLinks, 'utf8');
-  const fileContent = await fs.readFile(path.resolve(tmpDir, 'localhost.html'), 'utf8');
-  return expect(fileContent).toBe(result);
+
+  const receivedHtml = await fs.readFile(path.resolve(tmpDir, 'localhost.html'), 'utf8');
+  const receivedImg = await fs.readFile(path.resolve(tmpDir, 'localhost_files/files-img.jpg'), 'utf8');
+  const receivedScript = await fs.readFile(path.resolve(tmpDir, 'localhost_files/files-script.txt'), 'utf8');
+  const receivedStyle = await fs.readFile(path.resolve(tmpDir, 'localhost_files/files-style.css'), 'utf8');
+
+  const expectedHtml = await fs.readFile(htmlWithChangedLinks, 'utf8');
+  const expectedImg = await fs.readFile(image, 'utf8');
+  const expectedScript = await fs.readFile(script, 'utf8');
+  const expectedStyle = await fs.readFile(style, 'utf8');
+
+  expect(receivedHtml).toBe(expectedHtml);
+  expect(receivedImg).toBe(expectedImg);
+  expect(receivedScript).toBe(expectedScript);
+  expect(receivedStyle).toBe(expectedStyle);
 });

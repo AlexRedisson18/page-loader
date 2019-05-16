@@ -44,7 +44,7 @@ export default (pageUrl, pathForSave) => {
   };
   const fileDir = {
     name: linkToCebab(pageUrl, '_file'),
-    path: path.join(pathForSave, linkToCebab(pageUrl, '_file')),
+    path: path.join(pathForSave, linkToCebab(pageUrl, '_files')),
   };
   const linksList = [];
   let changedHtml;
