@@ -5,6 +5,6 @@
 
 ## How to install
 
-`sudo npm i -g diffcalculatorred18`
+`sudo npm i -g page-loader18`
 
 ## How to use
