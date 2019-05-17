@@ -1,6 +1,6 @@
 {
   "name": "page-loader18",
-  "version": "1.0.0",
+  "version": "2.2.0",
   "description": "downloads the page data to the specified folder",
   "bin": {
     "page-loader": "dist/bin/page-loader.js"
@@ -52,7 +52,6 @@
     "cheerio": "^1.0.0-rc.3",
     "commander": "^2.19.0",
     "debug": "^4.1.1",
-    "listr": "^0.14.3",
-    "lodash": "^4.17.11"
+    "listr": "^0.14.3"
   }
 }

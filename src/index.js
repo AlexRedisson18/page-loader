@@ -85,7 +85,5 @@ export default (pageUrl, pathForSave) => {
           }),
       })), { concurrent: true });
       return tasks.run();
-    })
-    .catch(error => console.error(error.message))
-    .then(() => console.log(`\nPage '${mainFile.name}' was successfuly downloaded\nfrom ${pageUrl} to ${pathForSave}`));
+    });
 };

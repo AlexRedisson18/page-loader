@@ -16,8 +16,9 @@ const image = path.resolve(__dirname, '__fixtures__/files/img.jpg');
 const script = path.resolve(__dirname, '__fixtures__/files/script.txt');
 const style = path.resolve(__dirname, '__fixtures__/files/style.css');
 
+const host = 'http://localhost';
+
 test('download simple html', async () => {
-  const host = 'http://localhost';
   const tmpDir = await fs.mkdtemp(path.resolve(os.tmpdir(), 'test-directory-'));
   nock(host)
     .get('/')
@@ -29,7 +30,6 @@ test('download simple html', async () => {
 });
 
 test('download changed html with resources', async () => {
-  const host = 'http://localhost';
   const tmpDir = await fs.mkdtemp(path.resolve(os.tmpdir(), 'test-directory-'));
   nock(host)
     .get('/')
@@ -60,4 +60,12 @@ test('download changed html with resources', async () => {
   expect(receivedImg).toBe(expectedImg);
   expect(receivedScript).toBe(expectedScript);
   expect(receivedStyle).toBe(expectedStyle);
+});
+
+test('Error 404', async () => {
+  const tmpDir = await fs.mkdtemp(path.resolve(os.tmpdir(), 'test-directory-'));
+  nock(host)
+    .get('/')
+    .reply(404);
+  await expect(downloadPage(host, tmpDir)).rejects.toThrowErrorMatchingSnapshot();
 });
